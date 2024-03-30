@@ -1,18 +1,18 @@
-package adapters
+package orderadapter
 
 import (
 	"api/entities"
-	"api/usecases"
+	orderusecase "api/usecases/order"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 type HttpOrderHandler struct {
-	orderUseCase usecases.OrderUseCase
+	orderUseCase orderusecase.OrderUseCase
 }
 
-func NewHttpOrderHandler(useCase usecases.OrderUseCase) *HttpOrderHandler {
+func NewHttpOrderHandler(useCase orderusecase.OrderUseCase) *HttpOrderHandler {
 	return &HttpOrderHandler{orderUseCase: useCase}
 }
 

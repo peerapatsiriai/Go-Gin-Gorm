@@ -1,8 +1,8 @@
-package adapters
+package orderadapter
 
 import (
 	"api/entities"
-	"api/usecases"
+	orderusecase "api/usecases/order"
 
 	"gorm.io/gorm"
 )
@@ -11,7 +11,7 @@ type GormOrderRepository struct {
 	db *gorm.DB
 }
 
-func NewGormOrderRepository(db *gorm.DB) usecases.OrderRepository {
+func NewGormOrderRepository(db *gorm.DB) orderusecase.OrderRepository {
 	return &GormOrderRepository{db: db}
 }
 

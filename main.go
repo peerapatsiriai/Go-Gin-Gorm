@@ -10,10 +10,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 
-	adapters "api/adapters"
+	orderAdapters "api/adapters/order"
+	userAdapters "api/adapters/user"
 	connect_db "api/configs/database"
-	entities "api/entities"
-	usecases "api/usecases"
+	Entities "api/entities"
+	orderUseCase "api/usecases/order"
+	userUseCase "api/usecases/user"
 )
 
 func main() {
@@ -30,17 +32,27 @@ func main() {
 	router := gin.New()
 
 	// Run database migrations
-	if err := db.AutoMigrate(&entities.Order{}); err != nil {
+	if err := db.AutoMigrate(&Entities.Order{}, &Entities.User{}); err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	orderRepo := adapters.NewGormOrderRepository(db)
-	orderService := usecases.NewOrderService(orderRepo)
-	orderHandler := adapters.NewHttpOrderHandler(orderService)
+	orderRepo := orderAdapters.NewGormOrderRepository(db)
+	orderService := orderUseCase.NewOrderService(orderRepo)
+	orderHandler := orderAdapters.NewHttpOrderHandler(orderService)
 
 	router.POST("/orders", orderHandler.Create)
 	router.GET("/orders", orderHandler.GetAll)
+
+	userRepo := userAdapters.NewGormUserRepository(db)
+	userService := userUseCase.NewUserService(userRepo)
+	userHandler := userAdapters.NewHttpUserHandler(userService)
+
+	router.POST("/users", userHandler.Create)
+	router.GET("/users", userHandler.GetAll)
+	router.GET("/users/:id", userHandler.GetByID)
+	router.PUT("/users/:id", userHandler.Update)
+	router.DELETE("/users/:id", userHandler.Delete)
 
 	// Start HTTP server
 	PORT := os.Getenv("PORT")
